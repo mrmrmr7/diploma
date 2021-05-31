@@ -1,0 +1,2 @@
+{"circle_count_from": 10, "circle_count_to": 70, "axis_size": 10, "attempts": 30, "circle_radius": 0.5, "shuffles_count": 20}10: 30
+11: 30

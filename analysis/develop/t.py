@@ -1,0 +1,1 @@
+print([*range(0), *range(0 + 1, 20)])

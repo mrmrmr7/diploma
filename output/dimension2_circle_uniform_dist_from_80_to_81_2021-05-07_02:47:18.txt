@@ -1,0 +1,1 @@
+{"circle_count_from": 80, "circle_count_to": 81, "axis_size": 10, "attempts": 30, "circle_radius": 0.5, "shuffles_count": 50}80: 21
