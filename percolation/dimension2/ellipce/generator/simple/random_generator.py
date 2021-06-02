@@ -1,11 +1,12 @@
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
-from scipy.spatial.distance import euclidean as distance 
+from scipy.spatial.distance import euclidean as distance
 import math as m
 import random
 from operator import itemgetter as get
 import json
+
 
 class Generator:
     def calculate_r(self, phi, phi_0, a, b, **kvargs):
@@ -16,7 +17,8 @@ class Generator:
         dx = _ellipse2['x']-_ellipse1['x']
         dy = _ellipse2['y']-_ellipse1['y']
 
-        if dx == 0: return (90 + _ellipse1["phi_0"], 90 + _ellipse2["phi_0"])
+        if dx == 0:
+            return (90 + _ellipse1["phi_0"], 90 + _ellipse2["phi_0"])
 
         e1e2_tan = dy/dx
         tan_phi = m.atan(e1e2_tan) * 180.0 / m.pi
@@ -28,7 +30,7 @@ class Generator:
         return (e1_phi, e2_phi)
 
     def ellipse_dist(self, _ellipse1, _ellipse2):
-        return distance(get("x", "y")(_ellipse1), 
+        return distance(get("x", "y")(_ellipse1),
                         get("x", "y")(_ellipse2))
 
     def is_ellipses_intersect(self, _ellipse1, _ellipse2):
@@ -56,8 +58,8 @@ class Generator:
 
         return go.Scatter(x=x_new, y=y_new)
 
-    def generate_with_ellipce_count(self, 
-                                    circle_count, 
+    def generate_with_ellipce_count(self,
+                                    circle_count,
                                     axis_size,
                                     a,
                                     b):
@@ -66,11 +68,11 @@ class Generator:
         for _ in range(circle_count):
             ellipses.append({
                 "phi_0": random.randint(0, 179),
-                "a": a, 
+                "a": a,
                 "b": b,
                 "x": random.random() * (axis_size - 2 * a) + a,
                 "y": random.random() * (axis_size - 2 * a) + a,
-                })
+            })
 
         e_intersect = {}
         for e1 in ellipses:
@@ -78,10 +80,9 @@ class Generator:
 
             for e2 in ellipses:
                 if e1 != e2 and self.is_ellipses_intersect(e1, e2):
-                        e_intersect_list.append(e2)
+                    e_intersect_list.append(e2)
 
             e_intersect[json.dumps(e1)] = e_intersect_list
-
 
         keys = list(e_intersect.keys())
         random.shuffle(keys)
@@ -94,8 +95,9 @@ class Generator:
 
             for each in e_intersect[k]:
                 e_str = json.dumps(each)
-                if keys and e_str in keys: keys.remove(json.dumps(each))
+                if keys and e_str in keys:
+                    keys.remove(json.dumps(each))
 
-        parsed = [ json.loads(each) for each in final_points ]
+        parsed = [json.loads(each) for each in final_points]
         zip_ellipce_with_index = zip(parsed, range(len(parsed)))
-        return [ {**e, 'index': index + 1} for (e, index) in zip_ellipce_with_index]
+        return [{**e, 'index': index + 1} for (e, index) in zip_ellipce_with_index]

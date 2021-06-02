@@ -145,7 +145,7 @@ def impose_stars_on_figure(_stars, _p, _get_scatter):
     
     return fig
         
-p={
+p = {
     "star_count":5,
     "r_inner":3,
     "r_outer":10,

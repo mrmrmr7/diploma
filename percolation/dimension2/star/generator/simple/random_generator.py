@@ -7,7 +7,7 @@ import json
 import math
 
 class Generator:
-    def generate_accurate_star_points(self, _star, accuracy = 3):
+    def generate_accurate_star_points(self, _star, accuracy = 5):
         (x_arr, y_arr) = self.generate_star_points(_star)
 
         accuracy = 3

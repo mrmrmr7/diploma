@@ -1,19 +1,19 @@
-from percolation.dimension2.star.draw import get_star_scatter
 from numpy.lib.nanfunctions import nanmean
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import numpy as np
 import json
 
+
 class Visualizer:
-    def generate_accurate_star_points(self, _star, accuracy = 3):
-        (x_arr, y_arr) = generate_star_points(_star)
+    def generate_accurate_star_points(self, _star, accuracy=3):
+        (x_arr, y_arr) = self.generate_star_points(_star)
 
         accuracy = 3
         x_new_arr = []
         y_new_arr = []
-        zip_points = zip(x_arr[:-1], x_arr[1:], 
-                        y_arr[:-1], y_arr[1:])
+        zip_points = zip(x_arr[:-1], x_arr[1:],
+                         y_arr[:-1], y_arr[1:])
 
         for (x, x_next, y, y_next) in zip_points:
             dx = (x_next - x) / accuracy
@@ -23,7 +23,7 @@ class Visualizer:
                 x_new_arr.append(x + i * dx)
                 y_new_arr.append(y + i * dy)
 
-        return (x_new_arr,y_new_arr)
+        return (x_new_arr, y_new_arr)
 
     def generate_star_points(self, _star):
         r_inner = _star["r_inner"]
@@ -70,21 +70,22 @@ class Visualizer:
     #         y=y_new,
     #         line={"width": 10}
     #         )
-    
-    def get_star_scatter(self, _star, _type = "simple", accuracy = 3):
+
+    def get_star_scatter(self, _star, _type="simple", accuracy=3):
         x_arr = []
         y_arr = []
-        if _type == "simple": 
+        if _type == "simple":
             (x_arr, y_arr) = self.generate_star_points(_star)
         if _type == "accurate":
             (x_arr, y_arr) = self.generate_accurate_star_points(_star, accuracy)
         return go.Scatter(
             x=x_arr,
-            y=y_arr
-            )
-    
+            y=y_arr,
+            line={"width": 10, "color": "black"},
+        )
+
     def vizualize(self, _stars, axis_size, r_inner, r_outer):
-        _p={
+        _p = {
             "r_inner": r_inner,
             "r_outer": r_outer,
             "x_max": axis_size,
@@ -92,21 +93,26 @@ class Visualizer:
             "layout_w": 1000,
             "layout_h": 1000,
         }
-        
+
         fig = go.Figure(
-            layout=go.Layout( 
+            layout=go.Layout(
                 width=_p["layout_w"],
                 height=_p["layout_h"],
                 xaxis={"range": [-_p["r_outer"], _p["x_max"]+_p["r_outer"]]},
                 yaxis={"range": [-_p["r_outer"], _p["y_max"]+_p["r_outer"]]},
-                )
+                paper_bgcolor='rgb(255,255,255)',
+                plot_bgcolor='rgb(255,255,255)'
             )
+        )
 
+        fig.update_xaxes(showline=True, linewidth=10,
+                         linecolor='black', mirror=True)
+        fig.update_yaxes(showline=True, linewidth=10,
+                         linecolor='black', mirror=True)
         for each in _stars:
-            star_dict = json.loads(each)
-            fig.add_trace(get_star_scatter(star_dict))
-        
-        return fig
+            fig.add_trace(self.get_star_scatter(each))
+
+        fig.show()
 
     def visualize_mutiple_charts(self, rows, cols, circle_radius, axis_size, data_dict):
         fig = make_subplots(rows=rows, cols=cols)
