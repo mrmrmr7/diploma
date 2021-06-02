@@ -1,24 +1,15 @@
 import sys
 sys.path.append('.')
-from percolation.dimension2.circle.generator.simple.mesh_based_generator import CircleGenerator
-from percolation.dimension2.circle.visualizer import CircleVisualizer
+from percolation.dimension2.circle.generator.simple.mesh_based_generator import Generator
+from percolation.dimension2.circle.visualizer import Visualizer
 
-circle_radius = 0.5
-circle_count = 81
+r = 0.5
+count = 5
 axis_size = 10
-verbose = True
 
-g = CircleGenerator()
-v = CircleVisualizer()
+g = Generator()
+v = Visualizer()
 
-circles = g.generate_with_circle_count(circle_radius, 
-                                        circle_count, 
-                                        axis_size, 
-                                        verbose=verbose)
-
-circles = [ (p['x'], p['y']) for p in circles ]
-meshed_circles = [ (p['x'], p['y']) for p in g.meshed_circles ]
-
-v.vizualize(circle_radius, meshed_circles, axis_size, g.nearest_root)
-v.vizualize(circle_radius, circles, axis_size, g.nearest_root)
+circles = g.generate_elements_with_given_axis_size(r, count, axis_size)
+v.vizualize(circles, axis_size)
 
