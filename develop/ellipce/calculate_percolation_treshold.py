@@ -12,10 +12,10 @@ import numpy as np
 ellipce_count = 20
 coef = 2.1
 big_axis = 0.4
-small_axis = 0.4
+small_axis = 0.1
 all_gen_count = 100
-min_ellipce_percent = 0.4
-max_ellipce_percent = 0.402
+min_ellipce_percent = 0.02
+max_ellipce_percent = 0.7
 
 conductivity_percent_per_ellipce_count = {}
 
@@ -24,7 +24,7 @@ a = Analyzer()
 
 
 with open(f"output/2d/ellipce/{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}_c{coef}_a{big_axis}_b{small_axis}", 'w') as f:  
-    for ellipce_percent in np.arange(min_ellipce_percent, max_ellipce_percent, 0.002):
+    for ellipce_percent in np.arange(min_ellipce_percent, max_ellipce_percent, 0.02):
         conductive = 0
         for i in range(all_gen_count):
             print(f"ellipces: {ellipce_percent} repeat: {i} conductive: {conductive}")

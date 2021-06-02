@@ -146,7 +146,7 @@ class Generator:
         selected_ellipces = self._extend_tighest_circles(selected_ellipces, a, b, axis_size)
         
         shuffled_ellipces = deepcopy(selected_ellipces)
-        shuffles_count = 2000
+        shuffles_count = 20
         dr_x = a
         dr_y = a
 
@@ -156,7 +156,7 @@ class Generator:
                 
                 new_x = ellipce_to_shuffle['x'] + (2 * random.random() - 1) * dr_x
                 new_y = ellipce_to_shuffle['y'] + (2 * random.random() - 1) * dr_y
-                new_phi = ellipce_to_shuffle['phi_0'] + random.randint(-30, 30) 
+                new_phi = ellipce_to_shuffle['phi_0'] # + random.randint(-30, 30) 
                 
                 if new_x >= axis_size - a:
                     new_x = axis_size - a
