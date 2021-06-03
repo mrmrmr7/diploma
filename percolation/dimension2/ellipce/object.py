@@ -36,12 +36,12 @@ class Ellipce:
         other_xy = [_ellipse2.x, _ellipse2.y]
         return dist(self_xy, other_xy)
 
-    def is_intersect(self, other):
+    def is_intersect(self, other, coef = 1):
         (e1_phi, e2_phi) = self._calculate_phi(self, other)
         r1 = self._calculate_r(self.a, self.b, e1_phi)
         r2 = self._calculate_r(other.a, other.b, e2_phi)
         dist = self._ellipse_dist(self, other)
-        return (r1 + r2) > dist
+        return (r1 + r2) * coef > dist
     
     def try_to_move(self, dx, dy, dphi, min_x, max_x, min_y, max_y):
         res = deepcopy(self)

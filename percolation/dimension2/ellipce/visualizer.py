@@ -24,7 +24,7 @@ class Visualizer:
         return go.Scatter(
             x=x_new,
             y=y_new,
-            line={"width": 10, "color": "black"}, 
+            line={"width": 2, "color": "black"}, 
             name=f"ellipce {_ellipse.index}"
             )
         
