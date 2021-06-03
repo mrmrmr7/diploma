@@ -10,6 +10,7 @@ class Ellipce:
         self.phi = phi
         self.a = a
         self.b = b
+        self.walking_dist = 0
         
     def _calculate_r(self, a, b, phi):
         phi_actual_rad = phi * m.pi / 180.0
@@ -37,11 +38,15 @@ class Ellipce:
         return dist(self_xy, other_xy)
 
     def is_intersect(self, other, coef = 1):
+        d_raw = dist([self.x, self.y], [other.x, other.y])
+        if d_raw > self.a + other.a:
+            return False
+        
         (e1_phi, e2_phi) = self._calculate_phi(self, other)
         r1 = self._calculate_r(self.a, self.b, e1_phi)
         r2 = self._calculate_r(other.a, other.b, e2_phi)
-        dist = self._ellipse_dist(self, other)
-        return (r1 + r2) * coef > dist
+        d = self._ellipse_dist(self, other)
+        return (r1 + r2) * coef > d
     
     def try_to_move(self, dx, dy, dphi, min_x, max_x, min_y, max_y):
         res = deepcopy(self)
@@ -69,3 +74,9 @@ class Ellipce:
     
     def get_area(self): 
         return m.pi * self.a * self.b
+    
+    def add_walked_dist(self, way_to_add): 
+        self.walking_dist += way_to_add
+        
+    def is_moved_enought(self):
+        return self.walking_dist >= self.a * 3 
