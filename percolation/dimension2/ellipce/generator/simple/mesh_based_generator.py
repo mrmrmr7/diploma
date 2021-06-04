@@ -8,11 +8,34 @@ from percolation.dimension2.ellipce.object import Ellipce
 
 
 class Generator:
-    def _is_valid_position(self, items, new_item):
-        for item in items:
-            if item.index != new_item.index:
-                if new_item.is_intersect(item):
-                    return False
+    def _is_valid_position(self, items, new_item, v_index):
+        a = items[0].a
+        items_len = len(items)
+        x_sorted_arr = sorted(items, key=lambda v: v.x)
+        # y_sorted_arr = sorted(items, key=lambda v: v.x)
+
+        i = 0
+        new_item_index = new_item.index
+        for index in range(items_len):
+            if x_sorted_arr[index].index == new_item_index:
+                i = index
+                break
+            
+        for item_index in range(i - 1, -1, -1):
+            item = x_sorted_arr[item_index]
+            if abs(item.x - new_item.x) > 2 * a:
+                break
+            
+            if new_item.is_intersect(item):
+                return False
+                
+        for item_index in range(i + 1, items_len, 1):
+            item = x_sorted_arr[item_index]
+            if abs(item.x - new_item.x) > 2 * a:
+                return False
+            
+            if new_item.is_intersect(item):
+                return False
         return True
 
     def _shuffle(self, items, ax):
@@ -34,7 +57,7 @@ class Generator:
                     if way_to_update == 3:
                         new_p = item.try_to_move(ra, rb, 0, 0, ax, 0, ax)
                         
-                    if self._is_valid_position(items, new_p):
+                    if self._is_valid_position(items, new_p, ip):
                         d = dist([new_p.x, new_p.y], [item.x, item.y])
                         new_p.add_walked_dist(d)
                         motions_dist += d
