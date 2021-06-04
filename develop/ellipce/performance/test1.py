@@ -9,7 +9,7 @@ from datetime import datetime
 import numpy as np
 import time
 
-ellipce_count = 500
+ellipce_count = 1000
 coef = 1.1
 big_axis = 1.0
 small_axis = 0.5
@@ -22,7 +22,7 @@ a = Analyzer()
 
 conductive = 0
 
-all_gen_count = 10
+all_gen_count = 1
 avg_time_count = 0
 iteration_time_arr = []
 for i in range(all_gen_count):
