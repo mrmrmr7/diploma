@@ -1,4 +1,3 @@
-from hashlib import new
 import random
 from random import shuffle
 from scipy.spatial.distance import euclidean as dist
@@ -8,31 +7,22 @@ from percolation.dimension2.ellipce.object import Ellipce
 
 
 class Generator:
-    def _is_valid_position(self, items, new_item, v_index):
-        a = items[0].a
+    def _is_valid_position(self, items, new_item, i):
+        a = new_item.a
         items_len = len(items)
-        x_sorted_arr = sorted(items, key=lambda v: v.x)
-        # y_sorted_arr = sorted(items, key=lambda v: v.x)
-
-        i = 0
-        new_item_index = new_item.index
-        for index in range(items_len):
-            if x_sorted_arr[index].index == new_item_index:
-                i = index
-                break
             
-        for item_index in range(i - 1, -1, -1):
-            item = x_sorted_arr[item_index]
+        for index in range(i - 1, -1, -1):
+            item = items[index]
             if abs(item.x - new_item.x) > 2 * a:
                 break
             
             if new_item.is_intersect(item):
                 return False
                 
-        for item_index in range(i + 1, items_len, 1):
-            item = x_sorted_arr[item_index]
+        for index in range(i + 1, items_len, 1):
+            item = items[index]
             if abs(item.x - new_item.x) > 2 * a:
-                return False
+                return True
             
             if new_item.is_intersect(item):
                 return False
@@ -45,9 +35,11 @@ class Generator:
         n_max = 20
 
         motions_dist = 0
+        x_sorted_arr = sorted(items, key=lambda v: v.x)
         for _ in range(n_max):
-            for ip in range(items_count):
-                item = items[ip]
+            for ip in range(items_count * 5):
+                index = random.randint(0, items_count - 1)
+                item = x_sorted_arr[index]
                 if not item.is_moved_enought():
                     way_to_update = random.randint(1, 3)
                     if way_to_update == 1:
@@ -57,16 +49,17 @@ class Generator:
                     if way_to_update == 3:
                         new_p = item.try_to_move(ra, rb, 0, 0, ax, 0, ax)
                         
-                    if self._is_valid_position(items, new_p, ip):
+                    if self._is_valid_position(x_sorted_arr, new_p, index):
                         d = dist([new_p.x, new_p.y], [item.x, item.y])
                         new_p.add_walked_dist(d)
                         motions_dist += d
-                        items[ip] = new_p
-                    
+                        x_sorted_arr[index] = new_p
+                        x_sorted_arr = sorted(x_sorted_arr, key=lambda v: v.x)
+                        
             if motions_dist > items_count * ra:
                 break
 
-        return items
+        return x_sorted_arr
 
     def _generate(self, a, b, count, axis_size):
         x_ellipce_count = int(axis_size // (2 * a))
