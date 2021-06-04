@@ -3,7 +3,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 class CircleVisualizer:
-    def vizualize(self, circle_radius, circle_centers, axis_size, nearest_root, title=' '):
+    def vizualize(self, circle_radius, circle_centers, axis_size, title=' ', nearest_root = None):
         shapes = [
             {
                 "type": "circle",
@@ -30,7 +30,6 @@ class CircleVisualizer:
         fig = go.Figure(layout=layout)
         
         step = axis_size / nearest_root
-        
         for i in range(nearest_root + 1):
             fig.add_hline(i * step)
             fig.add_vline(i * step)
