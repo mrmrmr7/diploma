@@ -1,9 +1,10 @@
 from hashlib import new
 import random
-from percolation.dimension2.ellipce.object import Ellipce
 from random import shuffle
+from scipy.spatial.distance import euclidean as dist
 import math as m
 from operator import itemgetter as get
+from percolation.dimension2.ellipce.object import Ellipce
 
 
 class Generator:
@@ -15,34 +16,33 @@ class Generator:
         return True
 
     def _shuffle(self, items, ax):
+        items_count = len(items)
         ra = items[0].a
         rb = items[0].b
         n_max = 20
 
-        last_n = n_max
         motions_dist = 0
-        for n in range(n_max):
-            for ip in range(len(items)):
+        for _ in range(n_max):
+            for ip in range(items_count):
                 item = items[ip]
                 if not item.is_moved_enought():
-                    way_to_update = random.randint(1, 2)
+                    way_to_update = random.randint(1, 3)
                     if way_to_update == 1:
                         new_p = item.try_to_move(ra, 0, 0, 0, ax, 0, ax)
                     if way_to_update == 2:
                         new_p = item.try_to_move(0, rb, 0, 0, ax, 0, ax)
+                    if way_to_update == 3:
+                        new_p = item.try_to_move(ra, rb, 0, 0, ax, 0, ax)
                         
                     if self._is_valid_position(items, new_p):
-                        current_p_motion = m.sqrt(abs(new_p.x - item.x) ** 2 + abs(new_p.y - item.y) ** 2)
-                        new_p.add_walked_dist(current_p_motion)
-                        motions_dist += m.sqrt(abs(new_p.x - item.x) ** 2 + abs(new_p.y - item.y) ** 2)
+                        d = dist([new_p.x, new_p.y], [item.x, item.y])
+                        new_p.add_walked_dist(d)
+                        motions_dist += d
                         items[ip] = new_p
                     
-            if motions_dist > ax * 10:
-                print("stop!")
-                print(motions_dist)
-                last_n = n
+            if motions_dist > items_count * ra:
                 break
-        print(f"last_n: {last_n}")
+
         return items
 
     def _generate(self, a, b, count, axis_size):

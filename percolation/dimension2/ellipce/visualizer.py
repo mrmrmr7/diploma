@@ -28,17 +28,20 @@ class Visualizer:
             name=f"ellipce {_ellipse.index}"
             )
         
-    def vizualize(self, ellipces, axis_size):
+    def vizualize(self, ellipces, axis_size, size=1000, legend=False, title_text="New Picture"):
         layout = go.Layout( 
-            width=1000,
-            height=1000,
-            xaxis={"range": [-2, 12]},
-            yaxis={"range": [-2, 12]},
+            width=size,
+            height=size,
+            xaxis={"range": [0, axis_size]},
+            yaxis={"range": [0, axis_size]},
             paper_bgcolor='rgb(255,255,255)',
             plot_bgcolor='rgb(255,255,255)'
         )
 
         fig = go.Figure(layout=layout)
+
+        fig.update_layout(showlegend=legend)
+        fig.update_layout(title_text=title_text)
 
         for each in ellipces:
             fig.add_trace(self.get_ellipce_scatter(each))
