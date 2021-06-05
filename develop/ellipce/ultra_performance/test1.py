@@ -10,7 +10,7 @@ from datetime import datetime
 import numpy as np
 import time
 
-ellipce_count = 1000
+ellipce_count = 200
 coef = 1.1
 big_axis = 1.0
 small_axis = 0.7
