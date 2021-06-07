@@ -3,7 +3,7 @@ import sys
 sys.path.append('.')
 
 from percolation.dimension2.circle.generator.simple.tight_packing_based_generator import CircleGenerator
-from percolation.dimension2.circle.visualizer import CircleVisualizer
+from percolation.dimension2.circle.visualizer import Visualizer
 from pprint import pprint
 import plotly.graph_objects as go
 import scipy.stats
@@ -14,10 +14,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 g = CircleGenerator()
-v = CircleVisualizer()
+v = Visualizer()
 
-gen_count = 10
-circles_count = 105
+gen_count = 18
+circles_count = 2
 axis_size = 10
 circles_data = []
 for igen in range(gen_count):
@@ -26,6 +26,7 @@ for igen in range(gen_count):
                             circle_radius=0.5,
                             circle_count=circles_count,
                             axis_size=axis_size,
+                            shuffles_count=50,
                             verbose=False
                         ))
     
@@ -35,9 +36,9 @@ for index in range(1, circles_count):
     y_arr = []
     for iteration in circles_data:
         for circle in iteration:
-            if circle['index'] == index:
-                x_arr.append(circle['x'])
-                y_arr.append(circle['y'])
+            if circle.index == index:
+                x_arr.append(circle.x)
+                y_arr.append(circle.y)
                 break
     
     index_based_data[index] = {'x_arr': x_arr, 'y_arr': y_arr}
@@ -97,8 +98,14 @@ for index, values in index_based_data.items():
         x = values['x_arr'],
         y = values['y_arr'], 
         name=f'num: {index}, r: {round(r, 3)}',
-        line=dict(color='green' if is_normally_located else 'red') 
+        line=dict(width=5, color='green' if is_normally_located else 'red'),
+        marker=dict(size=15, line=dict(width=2, color='black'))
     ))
+    fig.update_xaxes(showgrid=True, gridwidth=3, gridcolor='Gray')
+    fig.update_yaxes(showgrid=True, gridwidth=3, gridcolor='Gray')
+    fig.update_xaxes(showline=True, linewidth=10, linecolor='black', mirror=True)
+    fig.update_yaxes(showline=True, linewidth=10, linecolor='black', mirror=True)
+    fig.update_layout(paper_bgcolor='rgb(255,255,255)', plot_bgcolor='rgb(255,255,255)')
     
     
 print(f'Normally located: {normally_located}')

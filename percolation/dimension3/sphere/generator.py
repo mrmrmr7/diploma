@@ -3,7 +3,6 @@ import math as m
 import random
 from scipy.spatial import distance
 import copy
-import plotly.express as px
 import scipy as sp
 
 

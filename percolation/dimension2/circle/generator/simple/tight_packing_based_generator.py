@@ -2,9 +2,7 @@ import numpy as np
 import random
 import math as m
 from scipy.spatial.distance import euclidean as dist
-import copy
-import plotly.express as px
-import scipy as sp
+from percolation.dimension2.circle.object import Circle
 from copy import deepcopy
 from operator import itemgetter
 
@@ -38,7 +36,9 @@ class CircleGenerator:
                     break
                 next_y = self.circle_radius + iy * dy
                 installed_circle_count += 1
-                tighest_circles.append({'index': installed_circle_count, 'x': next_x, 'y': next_y})
+                c = Circle(next_x, next_y, self.circle_radius)
+                c.index = installed_circle_count
+                tighest_circles.append(c)
                 ix += 1
             iy += 1
 
@@ -53,8 +53,8 @@ class CircleGenerator:
         tighest_circles = deepcopy(self.tighest_circles)
 
         axis_max = {
-            'x': max([p['x'] for p in tighest_circles]) + self.circle_radius, 
-            'y': max([p['y'] for p in tighest_circles]) + self.circle_radius
+            'x': max([p.x for p in tighest_circles]) + self.circle_radius, 
+            'y': max([p.y for p in tighest_circles]) + self.circle_radius
             }
 
         aspect = {
@@ -62,11 +62,11 @@ class CircleGenerator:
             'y': self.ranges['y'] / axis_max['y'],
         }
 
-        extended_circles = [ {
-                'x': c['x'] * aspect['x'], 
-                'y': c['y'] * aspect['y'],
-                'index': c['index']
-            } for c in tighest_circles ]
+        extended_circles = []
+        for c in tighest_circles:
+            new_c = Circle(c.x * aspect['x'], c.y * aspect['y'], c.r)
+            new_c.index = c.index
+            extended_circles.append(new_c)
 
         self.extended_circles = extended_circles
         if self.verbose: print(f"circles extending end.\n")
@@ -84,30 +84,21 @@ class CircleGenerator:
         shuffle_step_count = self.shuffles_count
         print_step = int(shuffle_step_count // 10)
 
-        for shuffle_step in range(shuffle_step_count):
+        for shuffle_step in range(shuffle_step_count * 10):
             if shuffle_step % print_step == 0:
                 if self.verbose: print(f"Percents done: {int(shuffle_step // print_step) * 10}%.")
                 if self.verbose: print(f"Shuffles done: {shuffle_step}")
 
             for i in range(extended_circles_count):
                 current_circle = deepcopy(shuffled_circles[i])
-                index = current_circle.pop('index', None)
+                index = current_circle.index
 
-                for k, v in current_circle.items():
-                    di = (random.random() - 1 / 2) * size
-                    new_k = v + di
-                    if new_k - size < 0:
-                        current_circle[k] = size
-                    elif new_k + size > ranges[k]:
-                        current_circle[k] = ranges[k] - size
-                    else:
-                        current_circle[k] = new_k
+                current_circle = current_circle.try_to_move(size, size, 0, ranges['x'], 0, ranges['y'])
 
-                current_circle['index'] = index
+                current_circle.index = index
                 is_intersect = False
                 for j in [*range(i), *range(i + 1, extended_circles_count)]:
-                    is_intersect = dist(itemgetter('x', 'y')(current_circle), 
-                                        itemgetter('x', 'y')(shuffled_circles[j])) <= 2 * size
+                    is_intersect = current_circle.is_intersect(shuffled_circles[j])
                     if is_intersect:
                         break
 
